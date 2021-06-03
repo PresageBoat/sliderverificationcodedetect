@@ -63,10 +63,16 @@ class SliderVerificationCodeDetect(object):
         #pre process backgound image
         blurred = cv.GaussianBlur(img_crop, (3, 3), 0)  #
         blurred_gray = cv.cvtColor(blurred, cv.COLOR_BGR2GRAY)
-        _, target = cv.threshold(blurred_gray, 127, 255, cv.THRESH_BINARY)
+        # _, target = cv.threshold(blurred_gray, 127, 255, cv.THRESH_BINARY)
+        _, target = cv.threshold(blurred_gray, 0, 255, cv.THRESH_OTSU)
+
+        cv.imwrite('blurred_gray.png', target)
 
         #pre process template image
         img_t_d=self.templateimg_process(img_t)
+
+        cv.imwrite('img_t_d.png', img_t_d)
+
 
         #match template image
         method = cv.TM_CCOEFF_NORMED
@@ -93,13 +99,13 @@ def test():
         return cv_img
 
     img_dir="./test/"
-    img_path=img_dir+"10/下载.png" #背景图
-    img_tp_path=img_dir+"10/p2.png"#模板图
+    img_path=img_dir+"3/下载.png" #背景图
+    img_tp_path=img_dir+"3/p2.png"#模板图
     img=cv_imread(img_path)
     img_tp=cv_imread(img_tp_path)
 
     #usage
-    upper_left=[0,60]
+    upper_left=[0,28]
     SVCD=SliderVerificationCodeDetect()
     location=SVCD(img_tp,img,upper_left)
     cv.rectangle(img, (location[0],location[1]), (location[2],location[3]), (0, 0, 255), 2)
